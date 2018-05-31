@@ -1,0 +1,72 @@
+1. MobileAuthenticate päring ja vastuse näidis
+POST https://tsp.demo.sk.ee/ HTTP/1.1
+Accept-Encoding: gzip,deflate
+Content-Type: text/xml;charset=UTF-8
+SOAPAction: ""
+Content-Length: 1178
+Host: tsp.demo.sk.ee
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.1.1 (java 1.5)
+
+<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:dig="http://www.sk.ee/DigiDocService/DigiDocService_2_3.wsdl">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <dig:MobileAuthenticate soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+         <IDCode xsi:type="xsd:string">14212128025</IDCode>
+         <CountryCode xsi:type="xsd:string">ee</CountryCode>
+         <PhoneNo xsi:type="xsd:string">+37200007</PhoneNo>
+         <Language xsi:type="xsd:string">EST</Language>
+         <ServiceName xsi:type="xsd:string">Testimine</ServiceName>
+         <MessageToDisplay xsi:type="xsd:string"></MessageToDisplay>
+         <SPChallenge xsi:type="xsd:string"></SPChallenge>
+         <MessagingMode xsi:type="xsd:string">asynchClientServer</MessagingMode>
+         <AsyncConfiguration xsi:type="xsd:int"></AsyncConfiguration>
+         <ReturnCertData xsi:type="xsd:boolean"></ReturnCertData>
+         <ReturnRevocationData xsi:type="xsd:boolean"></ReturnRevocationData>
+      </dig:MobileAuthenticate>
+   </soapenv:Body>
+</soapenv:Envelope>
+
+
+
+HTTP/1.1 200 OK
+Server: Apache-Coyote/1.1
+Accept: text/xml, text/html, image/gif, image/jpeg, ; q=.2, /*; q=.2
+SOAPAction: ""
+Content-Type: text/xml;charset=utf-8
+Content-Length: 946
+Date: Wed, 23 May 2018 14:56:44 GMT
+
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:dig="http://www.sk.ee/DigiDocService/DigiDocService_2_3.wsdl" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><SOAP-ENV:Header/><SOAP-ENV:Body SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><dig:MobileAuthenticateResponse><Sesscode xsi:type="xsd:int">69394114</Sesscode><Status xsi:type="xsd:string">OK</Status><UserIDCode xsi:type="xsd:string">14212128025</UserIDCode><UserGivenname xsi:type="xsd:string">SEITSMES</UserGivenname><UserSurname xsi:type="xsd:string">TESTNUMBER</UserSurname><UserCountry xsi:type="xsd:string">EE</UserCountry><UserCN xsi:type="xsd:string">TESTNUMBER,SEITSMES,14212128025</UserCN><ChallengeID xsi:type="xsd:string">1419</ChallengeID></dig:MobileAuthenticateResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>
+
+2.  GetMobileAuthenticateStatus päringu ja vastuse näidis
+POST https://tsp.demo.sk.ee/ HTTP/1.1
+Accept-Encoding: gzip,deflate
+Content-Type: text/xml;charset=UTF-8
+SOAPAction: ""
+Content-Length: 595
+Host: tsp.demo.sk.ee
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.1.1 (java 1.5)
+
+<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:dig="http://www.sk.ee/DigiDocService/DigiDocService_2_3.wsdl">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <dig:GetMobileAuthenticateStatus soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+         <Sesscode xsi:type="xsd:int">69394114</Sesscode>
+         <WaitSignature xsi:type="xsd:boolean">false</WaitSignature>
+      </dig:GetMobileAuthenticateStatus>
+   </soapenv:Body>
+</soapenv:Envelope>
+
+
+
+HTTP/1.1 200 OK
+Server: Apache-Coyote/1.1
+Accept: text/xml, text/html, image/gif, image/jpeg, ; q=.2, /*; q=.2
+SOAPAction: ""
+Content-Type: text/xml;charset=utf-8
+Content-Length: 614
+Date: Wed, 23 May 2018 15:02:46 GMT
+
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:dig="http://www.sk.ee/DigiDocService/DigiDocService_2_3.wsdl" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><SOAP-ENV:Header/><SOAP-ENV:Body SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><dig:GetMobileAuthenticateStatusResponse><Status xsi:type="xsd:string">USER_AUTHENTICATED</Status><Signature xsi:type="xsd:string"/></dig:GetMobileAuthenticateStatusResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>

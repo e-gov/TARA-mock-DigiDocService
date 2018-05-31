@@ -1,0 +1,17 @@
+{
+  "name": "MockServer",
+  "version": "1.0.0",
+  "description": "Simple Server for mocking mobileID responses",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "author": "Aleks Krause",
+  "dependencies": {
+    "express": "*",
+    "express-xml-bodyparser": "^0.3.0",
+    "fs": "*",
+    "soap": "*"
+  }
+}
