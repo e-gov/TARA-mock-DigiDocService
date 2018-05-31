@@ -3,16 +3,6 @@ const app = express();
 const port = 80;
 const fs = require('fs');
 const xmlParser = require('express-xml-bodyparser');
-const debug = false;
-
-//hardcoded namespace. dig was default namespace that was used when querrying with postman.
-// ns1 is the namespace when querry originates from TARA
-var namespace;
-if (debug) {
-    namespace = "dig";
-} else {
-    namespace = "ns1";
-}
 
 //set view engine
 app.set('view engine', 'ejs');
@@ -67,14 +57,14 @@ const getMobAuthStatusRes = '<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.x
 app.post('/', xmlParser({trim: true, explixitArray: false}), async (req, res) => {
     console.log("XML POST RECEIVED: " + Object.keys(req.body["soapenv:envelope"]["soapenv:body"][0])[0]);
     res.set('Content-Type', 'text/xml');
-    if (Object.keys(req.body["soapenv:envelope"]["soapenv:body"][0])[0] === namespace + ":mobileauthenticate") {
+    if (Object.keys(req.body["soapenv:envelope"]["soapenv:body"][0])[0].includes(":mobileauthenticate")) {
         getDelayFromFile().then(function (delayTime) {
             getStubResponse(delayTime).then(function (response) {
                 console.log("MobileAuthenticate response sent");
                 res.send(response);
             })
         });
-    } else if (Object.keys(req.body["soapenv:envelope"]["soapenv:body"][0])[0] === namespace + ":getmobileauthenticatestatus") {
+    } else if (Object.keys(req.body["soapenv:envelope"]["soapenv:body"][0])[0].includes(":getmobileauthenticatestatus")) {
         console.log("GetMobileAuthenticateStatus triggered");
         res.send(getMobAuthStatusRes);
     }
