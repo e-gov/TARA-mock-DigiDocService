@@ -13,3 +13,5 @@ XML querries can be made to: `http://<server-url>:port/`
 
 Delay value is kept in milliseconds in `config/delay.json`
 To change the delay value either edit the file or while the server is running go to: `http://<server-url>:port/delay` in your browser and change its value there.
+
+In order to tell the TARA-SERVER to make querries to this URL change mobileID.serviceUrl in application.properties in the TARA-SERVER to point to the IP of the server.
