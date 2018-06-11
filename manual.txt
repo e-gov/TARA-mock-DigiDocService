@@ -1,0 +1,48 @@
+TARA Infra AWS serveris.
+1.	Enne antud juhendi kasutamist tuleks esmalt läbi teha Nortali dockeriga kaasa antud kasutusjuhend, küsimuste korral pöörduda siia dokumenti.
+2.	Provision AWS server (Me kasitame: Ubunti Xenial 16.04 AMD64)
+3.	Setup Docker (sudo apt-get install docker.io)
+4.	Setup Docker composer (sudo curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose)
+5.	Muuda õigused Docker composeri jaoks (sudo chmod +x /usr/local/bin/docker-compose)
+6.	Loo docker volume (et postgresi baasi andmed säiliksid ka restartide vahel docker volume create --name tara-postgresql -d local)
+7.	Laadi all .zip fail nimega TARA infra docker.zip lingilt: <Link here>
+8.	Unzip sisu kausta ja laad see kaust serverisse WinSCP-ga (või sarnasega tarkvaraga)
+9.	Esmasel käivitamisel pead muutma application.properties faili, mis asub tara/tomcat/CAS kaustas, et genereeritaks baasi CAS-i tabelid. 
+Käivitada Tara-S esimest korda seades, kus me konfiguratsioonis ütleme talle ette, et palun tekita ise kõik algandmed. Selleks muudame application.properties failis esmakordsel käivitusel järgnevad parameetrid:
+...
+cas.serviceRegistry.initFromJson=true
+cas.serviceRegistry.jpa.ddlAuto=update
+svcreg.database.ddl.auto=update
+...
+Kui nüüd Tara-S on käima läinud, siis vaata korra andmebaasi ning veendu, et hunnik tabeleid on loodud! Kui jah, siis peata tomcat, ning muuda need parameetrid tagasi:
+...
+cas.serviceRegistry.initFromJson=false
+cas.serviceRegistry.jpa.ddlAuto=none
+svcreg.database.ddl.auto=none
+10.	Lae alla github-st mock server ja käivita see kuskil node serveril.
+11.	Muuda application.properties failis ära ip mis näitab kuhu mobiil id päringuid teostab oma mock serveri ip-ks.
+12.	Muuda TARA-Client kaustas dockeri käsku selliseks, et Dprovider.domain näitaks serveri poole mida soovid kasutada. Meie näite puhul oli tegemist mock serveri ip-ga. Lisa ka port.
+Näidis maven käsk: mvn clean compile exec:java -Dprovider.protocol=https -Dprovider.domain=52.208.156.133 -Dprovider.port=443
+13.	Ava kaust, mis kopeerisid AWS serverile ja käivita kogu tara infra (docker-compose -f docker-compose-tara.yml up --build)
+14.	Et kogu TARA infra seisma panna kasuta käsk docker-compose -f docker-compose-tara.yml down
+15.	OIDC klient tuleb käsitsi regada cas-management rakenduse kaudu. 
+* Logi sisse CAS haldusliidesesse https://sso-fe1.arendus.kit/cas-management (NB! et admin liidesesse sisse pääseda on vaja eelnevalt lisada tara/tomcat/CAS/user-details.properties oma isikukood (vajab teenuse restarti))
+* Lisa openIdDemo nimeline klient admin liideses - Juhend RIA konfust - TARA-Teenusehaldurijuhend
+16.	Ava brauseris https://tara-client.arendus.kit:8451/ui ja proovi sisse logida
+
+
+Lisa1. 
+Valikuline TARA komponentide ehitamine ja uuendamine Dockeri taristus (hetkel kõik WAR failid eemaldataud ning vajavad lisamist!)
+1. Ehita kokku cas.war ja kopeeri see .../tara Kasuta kindlasti prod type-i.
+2. Ehita kokku cas-overlay.war ja kopeeri see .../tara/
+3. Ehita kokku eidas-client ja kopeeri see .../eidas-client/
+4. Laadi alla eidas node ja kopeeri zip .../eidas-node/
+5. Ehita kokku idp ja kopeeri see .../eidas-node/idp
+6. Ehita kokku kõik docker imaged!
+
+Vajalikud .war failed võib lida siit: https://github.com/e-gov
+
+
+
+
+
