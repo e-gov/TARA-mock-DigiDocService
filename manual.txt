@@ -1,46 +1,49 @@
-TARA Infra AWS serveris.
-1.	Enne antud juhendi kasutamist tuleks esmalt läbi teha Nortali dockeriga kaasa antud kasutusjuhend, küsimuste korral pöörduda siia dokumenti.
-2.	Provision AWS server (Me kasitame: Ubunti Xenial 16.04 AMD64)
+TARA Infra in the AWS server.
+1.	This document is intended to be used after already having used and gone through the manual that came with the docker Nortal provided.
+2.	Provision AWS server (We used: Ubuntu Xenial 16.04 AMD64)
 3.	Setup Docker (sudo apt-get install docker.io)
 4.	Setup Docker composer (sudo curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose)
-5.	Muuda õigused Docker composeri jaoks (sudo chmod +x /usr/local/bin/docker-compose)
-6.	Loo docker volume (et postgresi baasi andmed säiliksid ka restartide vahel docker volume create --name tara-postgresql -d local)
-7.	Laadi all .zip fail nimega TARA infra docker.zip lingilt: <Link here>
-8.	Unzip sisu kausta ja laad see kaust serverisse WinSCP-ga (või sarnasega tarkvaraga)
-9.	Esmasel käivitamisel pead muutma application.properties faili, mis asub tara/tomcat/CAS kaustas, et genereeritaks baasi CAS-i tabelid. 
-Käivitada Tara-S esimest korda seades, kus me konfiguratsioonis ütleme talle ette, et palun tekita ise kõik algandmed. Selleks muudame application.properties failis esmakordsel käivitusel järgnevad parameetrid:
+5.	Change the rights for the composeri (sudo chmod +x /usr/local/bin/docker-compose)
+6.	Create a docker volume (so that postgres data would persist even between restarts docker volume create --name tara-postgresql -d local)
+7.	Download the .zip file: TARA infra docker.zip from: <Link here>
+8.	Unzip the contents somewhere and upload them to the server. Us
+9.	During the initial startup of the server change the application.properties file in the tara/tomcat/CAS directory so that CAS tables would be
+generated into the database. Initially start Tara-S in a manner where we give it an initial configuration which tells it to create all the initial data
+itself. For that we change application.properties in the following way: 
 ...
 cas.serviceRegistry.initFromJson=true
 cas.serviceRegistry.jpa.ddlAuto=update
 svcreg.database.ddl.auto=update
 ...
-Kui nüüd Tara-S on käima läinud, siis vaata korra andmebaasi ning veendu, et hunnik tabeleid on loodud! Kui jah, siis peata tomcat, ning muuda need parameetrid tagasi:
+Once Tara-S has started then check the database and make sure that all the tables have been created. If that is the case, then stop tomcat and change these parameters back to their originals:
 ...
 cas.serviceRegistry.initFromJson=false
 cas.serviceRegistry.jpa.ddlAuto=none
 svcreg.database.ddl.auto=none
-10.	Lae alla github-st mock server ja käivita see kuskil node serveril.
-11.	Muuda application.properties failis ära ip mis näitab kuhu mobiil id päringuid teostab oma mock serveri ip-ks.
-12.	Muuda TARA-Client kaustas dockeri käsku selliseks, et Dprovider.domain näitaks serveri poole mida soovid kasutada. Meie näite puhul oli tegemist mock serveri ip-ga. Lisa ka port.
-Näidis maven käsk: mvn clean compile exec:java -Dprovider.protocol=https -Dprovider.domain=52.208.156.133 -Dprovider.port=443
-13.	Ava kaust, mis kopeerisid AWS serverile ja käivita kogu tara infra (docker-compose -f docker-compose-tara.yml up --build)
-14.	Et kogu TARA infra seisma panna kasuta käsk docker-compose -f docker-compose-tara.yml down
-15.	OIDC klient tuleb käsitsi regada cas-management rakenduse kaudu. 
-* Logi sisse CAS haldusliidesesse https://sso-fe1.arendus.kit/cas-management (NB! et admin liidesesse sisse pääseda on vaja eelnevalt lisada tara/tomcat/CAS/user-details.properties oma isikukood (vajab teenuse restarti))
-* Lisa openIdDemo nimeline klient admin liideses - Juhend RIA konfust - TARA-Teenusehaldurijuhend
-16.	Ava brauseris https://tara-client.arendus.kit:8451/ui ja proovi sisse logida
+10.	Git clone the mock server ja and start it somewhere on a Node.js server.
+11.	In application.properties change the ip that tells the server where to do all its mobile-id querries to the ip of the mock server.
+12.	Change the maven command in the TARA-Client directory to make its querries to the right domain. In our case the client and the server were running on the same ip, 
+so the ip is the same as the one we are on, but on another port (443). 
+Example maven command: mvn clean compile exec:java -Dprovider.protocol=https -Dprovider.domain=52.208.156.133 -Dprovider.port=443
+13.	Open the root directory of the files that were copied to the server and start the tara docker. Command: docker-compose -f docker-compose-tara.yml up --build
+14.	If at some point you need to stop the docker (All the servers), then the command is: docker-compose -f docker-compose-tara.yml down
+15.	The OIDC client needs to be manually registered through the cas-management application.
+* Log in to the CAS management from your browser, url: https://sso-fe1.arendus.kit/cas-management (PS! to get access into the management console you 
+need to first add a valid ID code in tara/tomcat/CAS/user-details.properties. Also it will require a restart of the server) 
+* Add a client called openIdDemo into CAS management - Exact instructions in the RIA conf file - TARA-Teenusehaldurijuhend.
+16.	Open https://tara-client.arendus.kit:8451/ui in your browser and try logging in.
 
 
-Lisa1. 
-Valikuline TARA komponentide ehitamine ja uuendamine Dockeri taristus (hetkel kõik WAR failid eemaldataud ning vajavad lisamist!)
-1. Ehita kokku cas.war ja kopeeri see .../tara Kasuta kindlasti prod type-i.
-2. Ehita kokku cas-overlay.war ja kopeeri see .../tara/
-3. Ehita kokku eidas-client ja kopeeri see .../eidas-client/
-4. Laadi alla eidas node ja kopeeri zip .../eidas-node/
-5. Ehita kokku idp ja kopeeri see .../eidas-node/idp
-6. Ehita kokku kõik docker imaged!
+Extra: 
+Add the following war files:
+1. Build cas.war and copy it to.../tara Kasuta kindlasti prod type-i.
+2. Build cas-overlay.war and copy it to .../tara/
+3. Build eidas-client and copy it to.../eidas-client/
+4. Download eidas node and copy the zip contents to.../eidas-node/
+5. Build idp and copy it to .../eidas-node/idp
+6. Build all the docker images!
 
-Vajalikud .war failed võib lida siit: https://github.com/e-gov
+The necessary .war files can be found here: https://github.com/e-gov
 
 
 
